@@ -6,11 +6,31 @@
     state: link
     force: true
 
-- name: Install the console blanking disable service
-  ansible.builtin.template:
-    src: consoleblank-off.service.j2
-    dest: /etc/systemd/system/consoleblank-off.service
-    mode: "0644"
+- name: Disable kernel console blanking
+  ansible.builtin.shell: |
+    set -euo pipefail
+    if grep -q '^extraoptions=.*consoleblank=' /boot/armbianEnv.txt; then
+      exit 0
+    fi
+    if grep -q '^extraoptions=' /boot/armbianEnv.txt; then
+      sed -i 's/^extraoptions=.*/& consoleblank=0/' /boot/armbianEnv.txt
+    else
+      printf 'extraoptions=consoleblank=0\n' >> /boot/armbianEnv.txt
+    fi
+    echo CHANGED
+  register: sendspin_tui_service_consoleblank
+  changed_when: "'CHANGED' in sendspin_tui_service_consoleblank.stdout"
+  notify: Reboot the appliance
+
+- name: Remove the obsolete console blanking unit
+  ansible.builtin.file:
+    path: /etc/systemd/system/consoleblank-off.service
+    state: absent
+
+- name: Remove the obsolete console blanking enablement
+  ansible.builtin.file:
+    path: /etc/systemd/system/multi-user.target.wants/consoleblank-off.service
+    state: absent
 
 - name: Install the sendspin TUI service
   ansible.builtin.template:
@@ -22,12 +42,6 @@
 - name: Reload systemd units
   ansible.builtin.systemd:
     daemon_reload: true
-
-- name: Enable the console blanking disable service
-  ansible.builtin.systemd:
-    name: consoleblank-off
-    enabled: true
-    state: started
 
 - name: Enable the sendspin TUI service
   ansible.builtin.systemd:

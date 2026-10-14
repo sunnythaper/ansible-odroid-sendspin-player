@@ -17,7 +17,7 @@
     - role: sendspin_tui_service
 
   handlers:
-    - name: Reboot for the HiFi Shield 2 overlay
+    - name: Reboot the appliance
       ansible.builtin.command: shutdown -r --no-wall +1
       changed_when: true
       when: sendspin_allow_reboot | bool

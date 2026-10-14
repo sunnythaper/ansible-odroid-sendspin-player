@@ -101,7 +101,7 @@ If the card fails to appear, the first knob to try is `hifi_shield2_enable_spdif
 ## Console notes
 
 - The TUI runs on the Linux console (`tty1`) with `TERM=linux`, so colors are limited to the 16-color palette — the visualizer renders, but with reduced color depth.
-- Console blanking is disabled at runtime via a oneshot unit, so the display never sleeps.
+- Console blanking is disabled via `consoleblank=0` on the kernel command line (managed in `/boot/armbianEnv.txt`), so the display never sleeps.
 - A USB keyboard plugged into the C2 controls the TUI directly (space, arrows, `m`, `g`, `v`, `q`) — useful later if you add a wireless keyboard/remote combo.
 - With a keyboard you can also switch to other consoles with `Ctrl+Alt+F2` to get a normal login prompt.
 
@@ -121,6 +121,6 @@ roles/
   uv                       uv installer (as the sendspin user)
   sendspin                 uv tool install/upgrade sendspin
   sendspin_config          fully managed settings-tui.json
-  sendspin_tui_service     TUI on tty1: getty mask, consoleblank off, restart policy
+  sendspin_tui_service     TUI on tty1: getty mask, consoleblank=0, restart policy
 References/                upstream docs kept for reference
 ```
