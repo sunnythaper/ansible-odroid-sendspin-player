@@ -1,0 +1,42 @@
+---
+- name: Mask the getty on tty1
+  ansible.builtin.file:
+    src: /dev/null
+    dest: /etc/systemd/system/getty@tty1.service
+    state: link
+    force: true
+
+- name: Install the console blanking disable service
+  ansible.builtin.template:
+    src: consoleblank-off.service.j2
+    dest: /etc/systemd/system/consoleblank-off.service
+    mode: "0644"
+
+- name: Install the sendspin TUI service
+  ansible.builtin.template:
+    src: sendspin-tui.service.j2
+    dest: /etc/systemd/system/sendspin-tui.service
+    mode: "0644"
+  notify: Restart the sendspin TUI
+
+- name: Reload systemd units
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable the console blanking disable service
+  ansible.builtin.systemd:
+    name: consoleblank-off
+    enabled: true
+    state: started
+
+- name: Enable the sendspin TUI service
+  ansible.builtin.systemd:
+    name: sendspin-tui
+    enabled: true
+  when: sendspin_audio_ready | default(false)
+
+- name: Start the sendspin TUI service
+  ansible.builtin.systemd:
+    name: sendspin-tui
+    state: started
+  when: sendspin_audio_ready | default(false)

@@ -1,0 +1,9 @@
+[Unit]
+Description=Sendspin appliance convergence run
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/sendspin-pull.sh
+TimeoutStartSec=45min

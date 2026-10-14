@@ -1,0 +1,6 @@
+---
+- name: Restart the sendspin TUI
+  ansible.builtin.systemd:
+    name: sendspin-tui
+    state: restarted
+  when: sendspin_audio_ready | default(false)

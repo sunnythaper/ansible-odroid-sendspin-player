@@ -1,0 +1,10 @@
+[Unit]
+Description=Disable kernel console blanking
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "echo 0 > /sys/module/kernel/parameters/consoleblank"
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

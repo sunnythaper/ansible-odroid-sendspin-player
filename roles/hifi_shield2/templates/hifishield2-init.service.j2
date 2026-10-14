@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize the HiFi Shield 2 audio path
+After=sound.target
+Wants=sound.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/hifishield2-init.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+[Unit]
+Description=Sendspin TUI player on tty1
+Wants=network-online.target
+After=network-online.target sound.target hifishield2-init.service
+Conflicts=getty@tty1.service
+
+[Service]
+Type=simple
+User={{ sendspin_daemon_user }}
+SupplementaryGroups=audio
+Environment=TERM=linux
+TTYPath=/dev/tty1
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+TTYReset=yes
+TTYVHangup=yes
+ExecStart={{ sendspin_daemon_home }}/.local/bin/sendspin
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+
+[Install]
+WantedBy=multi-user.target

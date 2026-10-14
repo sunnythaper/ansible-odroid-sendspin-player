@@ -1,0 +1,29 @@
+---
+- name: List installed uv tools
+  ansible.builtin.command: "{{ sendspin_daemon_home }}/.local/bin/uv tool list"
+  become_user: "{{ sendspin_daemon_user }}"
+  register: sendspin_uv_tools
+  changed_when: false
+  failed_when: false
+
+- name: Install sendspin with uv
+  ansible.builtin.command: "{{ sendspin_daemon_home }}/.local/bin/uv tool install sendspin"
+  become_user: "{{ sendspin_daemon_user }}"
+  when: sendspin_uv_tools.stdout is not search('^sendspin', multiline=True)
+  changed_when: true
+  notify: Restart the sendspin TUI
+
+- name: Upgrade sendspin with uv
+  ansible.builtin.command: "{{ sendspin_daemon_home }}/.local/bin/uv tool upgrade sendspin"
+  become_user: "{{ sendspin_daemon_user }}"
+  when: sendspin_uv_tools.stdout is search('^sendspin', multiline=True)
+  register: sendspin_upgrade
+  changed_when: sendspin_upgrade.stdout is search('(?i)upgraded')
+  failed_when: false
+  notify: Restart the sendspin TUI
+
+- name: Verify the sendspin binary is present
+  ansible.builtin.stat:
+    path: "{{ sendspin_daemon_home }}/.local/bin/sendspin"
+  register: sendspin_binary
+  failed_when: not sendspin_binary.stat.exists

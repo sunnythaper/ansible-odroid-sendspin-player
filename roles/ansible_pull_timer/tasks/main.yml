@@ -1,0 +1,28 @@
+---
+- name: Install the sendspin pull wrapper script
+  ansible.builtin.template:
+    src: sendspin-pull.sh.j2
+    dest: /usr/local/bin/sendspin-pull.sh
+    mode: "0755"
+
+- name: Install the sendspin pull service
+  ansible.builtin.template:
+    src: sendspin-pull.service.j2
+    dest: /etc/systemd/system/sendspin-pull.service
+    mode: "0644"
+
+- name: Install the sendspin pull timer
+  ansible.builtin.template:
+    src: sendspin-pull.timer.j2
+    dest: /etc/systemd/system/sendspin-pull.timer
+    mode: "0644"
+
+- name: Reload systemd units
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable the sendspin pull timer
+  ansible.builtin.systemd:
+    name: sendspin-pull.timer
+    enabled: true
+    state: started

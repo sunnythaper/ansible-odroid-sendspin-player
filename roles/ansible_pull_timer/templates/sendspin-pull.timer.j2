@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Sendspin convergence playbook periodically
+
+[Timer]
+OnBootSec={{ sendspin_pull_boot_delay_minutes }}min
+OnUnitActiveSec={{ sendspin_pull_interval_minutes }}min
+Persistent=true
+Unit=sendspin-pull.service
+
+[Install]
+WantedBy=timers.target

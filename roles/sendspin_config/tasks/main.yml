@@ -1,0 +1,18 @@
+---
+- name: Ensure the sendspin config directory exists
+  ansible.builtin.file:
+    path: "{{ sendspin_daemon_home }}/.config/sendspin"
+    state: directory
+    owner: "{{ sendspin_daemon_user }}"
+    group: "{{ sendspin_daemon_user }}"
+    mode: "0755"
+
+- name: Write the managed TUI settings
+  ansible.builtin.template:
+    src: settings-tui.json.j2
+    dest: "{{ sendspin_daemon_home }}/.config/sendspin/settings-tui.json"
+    owner: "{{ sendspin_daemon_user }}"
+    group: "{{ sendspin_daemon_user }}"
+    mode: "0644"
+  when: sendspin_audio_ready | default(false)
+  notify: Restart the sendspin TUI

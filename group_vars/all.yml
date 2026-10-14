@@ -1,0 +1,5 @@
+---
+sendspin_hostname: livingroom
+sendspin_allow_reboot: true
+sendspin_daemon_user: sendspin
+sendspin_daemon_home: /home/sendspin

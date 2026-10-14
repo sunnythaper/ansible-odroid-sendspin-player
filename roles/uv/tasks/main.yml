@@ -1,0 +1,10 @@
+---
+- name: Install uv for the sendspin user
+  ansible.builtin.shell: |
+    set -euo pipefail
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+  args:
+    creates: "{{ sendspin_daemon_home }}/.local/bin/uv"
+    executable: /bin/bash
+  become_user: "{{ sendspin_daemon_user }}"
+  changed_when: true

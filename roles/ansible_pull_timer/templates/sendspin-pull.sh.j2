@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+
+exec 9>/var/lock/sendspin-pull.lock
+flock -n 9 || exit 0
+
+exec ansible-pull \
+    --url "{{ sendspin_repo_url }}" \
+    --checkout "{{ sendspin_repo_branch }}" \
+    --directory "{{ sendspin_pull_directory }}" \
+    --inventory "$(hostname -s),"

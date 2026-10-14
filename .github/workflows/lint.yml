@@ -1,0 +1,27 @@
+---
+name: lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install tooling
+        run: pip install ansible-lint
+
+      - name: Run ansible-lint
+        run: ansible-lint
+
+      - name: Syntax check the playbook
+        run: ansible-playbook --syntax-check -i localhost, local.yml

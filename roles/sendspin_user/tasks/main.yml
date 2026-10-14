@@ -1,0 +1,15 @@
+---
+- name: Create the sendspin system user
+  ansible.builtin.user:
+    name: "{{ sendspin_daemon_user }}"
+    comment: Sendspin player
+    home: "{{ sendspin_daemon_home }}"
+    create_home: true
+    shell: /bin/bash
+    system: true
+
+- name: Add the sendspin user to the audio group
+  ansible.builtin.user:
+    name: "{{ sendspin_daemon_user }}"
+    groups: audio
+    append: true

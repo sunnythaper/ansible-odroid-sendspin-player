@@ -1,0 +1,18 @@
+---
+- name: Install appliance packages
+  ansible.builtin.apt:
+    name:
+      - alsa-utils
+      - curl
+      - device-tree-compiler
+      - git
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install audio runtime libraries
+  ansible.builtin.apt:
+    name:
+      - libportaudio2
+      - libopenblas0-pthread
+    state: present
