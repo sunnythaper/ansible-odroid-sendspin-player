@@ -32,7 +32,7 @@
 
 - name: Compile the device tree overlay
   ansible.builtin.command:
-    cmd: dtc -@ -I dts -O dtbo -o /boot/overlay-user/hifishield2.dtbo /boot/overlay-user/hifishield2.dts
+    cmd: dtc -@ -I dts -O dtb -o /boot/overlay-user/hifishield2.dtbo /boot/overlay-user/hifishield2.dts
   register: hifi_shield2_overlay_compiled
   when: (not hifi_shield2_card_present) or (hifi_shield2_overlay_source is changed)
   changed_when: hifi_shield2_overlay_compiled.rc == 0
