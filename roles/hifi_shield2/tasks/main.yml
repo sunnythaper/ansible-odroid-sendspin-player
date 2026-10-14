@@ -41,7 +41,10 @@
   notify: Reboot for the HiFi Shield 2 overlay
 
 - name: Report a HiFi Shield 2 activation failure
-  when: not hifi_shield2_card_present and hifi_shield2_overlay_configured.rc == 0 and not (hifi_shield2_overlay_source is changed or hifi_shield2_overlay_enabled is changed)
+  when:
+    - not hifi_shield2_card_present
+    - hifi_shield2_overlay_configured.rc == 0
+    - not (hifi_shield2_overlay_source is changed or hifi_shield2_overlay_enabled is changed)
   block:
     - name: Capture the kernel log
       ansible.builtin.command: dmesg
