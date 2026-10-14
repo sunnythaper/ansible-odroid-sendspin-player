@@ -3,7 +3,8 @@
   "last_server_url": {{ sendspin_server_url | to_json }},
   "audio_device": {{ hifi_shield2_audio_device_resolved | to_json }},
   "use_hardware_volume": {{ sendspin_use_hardware_volume | to_json }},
-  "use_mpris": {{ sendspin_use_mpris | to_json }},
+  "use_mpris": {{ sendspin_use_mpris | to_json }},{% if sendspin_manufacturer | default('') | length > 0 %}
+  "manufacturer": {{ sendspin_manufacturer | to_json }},{% endif %}
   "visualizer": {{ sendspin_visualizer | to_json }},
   "unpaired_access": {{ sendspin_unpaired_access | to_json }}
 }

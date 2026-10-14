@@ -1,6 +1,7 @@
 ---
 sendspin_hostname: livingroom
 sendspin_name: "{{ sendspin_hostname }}"
+sendspin_manufacturer: ""
 sendspin_server_url: ws://10.0.70.2:8927/sendspin
 sendspin_use_hardware_volume: false
 sendspin_use_mpris: false

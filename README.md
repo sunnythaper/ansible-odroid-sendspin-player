@@ -44,6 +44,7 @@ Appliance-wide knobs live in `group_vars/all.yml` — override any of them there
 ---
 # host_vars/livingroom.yml
 sendspin_name: Living Room          # friendly name shown on the Sendspin server
+sendspin_manufacturer: Hard Kernel oDroid C2  # override the auto-reported manufacturer in the client hello
 ```
 
 To add a second device: flash it, run the bootstrap with a different hostname (e.g. `kitchen`), and commit a `host_vars/kitchen.yml` containing at least `sendspin_hostname: kitchen` plus any overrides.
@@ -54,6 +55,7 @@ To add a second device: flash it, run the bootstrap with a different hostname (e
 |----------|---------|------------------|---------|
 | `sendspin_hostname` | `livingroom` | `group_vars/all.yml` | Enforced OS hostname for this device |
 | `sendspin_name` | `{{ sendspin_hostname }}` | `group_vars/all.yml` | Client name advertised to the server |
+| `sendspin_manufacturer` | `""` (auto) | `group_vars/all.yml` | Overrides the manufacturer reported in the client hello; empty omits the key |
 | `sendspin_server_url` | example | `group_vars/all.yml` | Server URL in `settings-tui.json` — set the real URL here |
 | `hifi_shield2_audio_device` | `""` (auto) | `hifi_shield2` role | Non-empty value pins the ALSA device, e.g. `hw:0,1` for optical |
 | `hifi_shield2_enable_spdif` | `true` | `hifi_shield2` role | Adds the SPDIF (optical) PCM to the sound card |
