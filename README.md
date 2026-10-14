@@ -16,20 +16,6 @@ Turns an Odroid C2 running Armbian into a self-managing [Sendspin](https://githu
 - Armbian minimal image, Debian 13 *trixie*, aarch64
 - HDMI display connected (this is the TUI screen)
 - Network with internet access on the device
-- This repository pushed to GitHub (public)
-
-## Repository setup (once, from your workstation)
-
-```bash
-git init
-git add .
-git commit -m "Sendspin TUI appliance playbook"
-git branch -M main
-git remote add origin https://github.com/sunnythaper/ansible-odroid-sendspin-player.git
-git push -u origin main
-```
-
-A GitHub Actions workflow (`.github/workflows/lint.yml`) runs `ansible-lint` and a playbook syntax check on every push — keep it green so devices never converge on a broken playbook.
 
 ## Bootstrapping a device (per Odroid)
 
