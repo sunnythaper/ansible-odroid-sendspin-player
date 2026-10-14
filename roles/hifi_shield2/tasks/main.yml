@@ -16,6 +16,12 @@
   changed_when: false
   failed_when: false
 
+- name: Ensure the user overlay directory exists
+  ansible.builtin.file:
+    path: /boot/overlay-user
+    state: directory
+    mode: "0755"
+
 - name: Install the device tree overlay source
   ansible.builtin.template:
     src: hifishield2.dts.j2
