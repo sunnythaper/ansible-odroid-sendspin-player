@@ -33,10 +33,10 @@
   ansible.builtin.systemd:
     name: sendspin-tui
     enabled: true
-  when: sendspin_audio_ready | default(false)
+  when: hifi_shield2_audio_ready | default(false)
 
 - name: Start the sendspin TUI service
   ansible.builtin.systemd:
     name: sendspin-tui
     state: started
-  when: sendspin_audio_ready | default(false)
+  when: hifi_shield2_audio_ready | default(false)

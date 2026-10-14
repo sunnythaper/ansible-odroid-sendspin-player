@@ -1,6 +1,0 @@
----
-sendspin_repo_url: https://github.com/sunnythaper/ansible-odroid-sendspin-player.git
-sendspin_repo_branch: main
-sendspin_pull_directory: /var/lib/ansible/local
-sendspin_pull_interval_minutes: 30
-sendspin_pull_boot_delay_minutes: 10

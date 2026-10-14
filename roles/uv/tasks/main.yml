@@ -6,5 +6,6 @@
   args:
     creates: "{{ sendspin_daemon_home }}/.local/bin/uv"
     executable: /bin/bash
+  become: true
   become_user: "{{ sendspin_daemon_user }}"
   changed_when: true

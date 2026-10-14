@@ -52,7 +52,7 @@ From then on the device re-converges every 30 minutes and shortly after each boo
 
 ## Per-device configuration
 
-Each role declares its own defaults in `roles/<role>/defaults/main.yml`. Override any of them in `group_vars/all.yml` (applies to every device) or `host_vars/<hostname>.yml` (one device, named after its hostname):
+Appliance-wide knobs live in `group_vars/all.yml` — override any of them there (all devices) or in `host_vars/<hostname>.yml` (one device, named after its hostname). Two board-local toggles live in `roles/hifi_shield2/defaults/main.yml`:
 
 ```yaml
 ---
@@ -67,14 +67,14 @@ To add a second device: flash it, run the bootstrap with a different hostname (e
 | Variable | Default | Default lives in | Purpose |
 |----------|---------|------------------|---------|
 | `sendspin_hostname` | `livingroom` | `group_vars/all.yml` | Enforced OS hostname for this device |
-| `sendspin_name` | `{{ sendspin_hostname }}` | `sendspin_config` role | Client name advertised to the server |
-| `sendspin_server_url` | example | `sendspin_config` role | Server URL in `settings-tui.json` — override in `group_vars/all.yml` once you know the real URL |
-| `sendspin_audio_device` | `""` (auto) | `hifi_shield2` role | Non-empty value pins the ALSA device, e.g. `hw:0,1` for optical |
-| `sendspin_enable_spdif` | `true` | `hifi_shield2` role | Adds the SPDIF (optical) PCM to the sound card |
+| `sendspin_name` | `{{ sendspin_hostname }}` | `group_vars/all.yml` | Client name advertised to the server |
+| `sendspin_server_url` | example | `group_vars/all.yml` | Server URL in `settings-tui.json` — set the real URL here |
+| `hifi_shield2_audio_device` | `""` (auto) | `hifi_shield2` role | Non-empty value pins the ALSA device, e.g. `hw:0,1` for optical |
+| `hifi_shield2_enable_spdif` | `true` | `hifi_shield2` role | Adds the SPDIF (optical) PCM to the sound card |
 | `sendspin_allow_reboot` | `true` | `group_vars/all.yml` | Let the play reboot when the overlay changes |
-| `sendspin_use_hardware_volume` | `false` | `sendspin_config` role | Software volume only (set `true` later to control DAC/ALSA volume from the server) |
-| `sendspin_visualizer` | `true` | `sendspin_config` role | Render the visualizer on launch |
-| `sendspin_pull_interval_minutes` | `30` | `ansible_pull_timer` role | Convergence timer interval |
+| `sendspin_use_hardware_volume` | `false` | `group_vars/all.yml` | Software volume only (set `true` later to control DAC/ALSA volume from the server) |
+| `sendspin_visualizer` | `true` | `group_vars/all.yml` | Render the visualizer on launch |
+| `sendspin_pull_interval_minutes` | `30` | `group_vars/all.yml` | Convergence timer interval |
 
 Commit and push any change; devices pick it up on the next pull run. Note that `settings-tui.json` is fully managed, so runtime-saved settings (like volume) reset to defaults on each convergence run.
 
@@ -94,12 +94,12 @@ If the shield's ALSA card is ever missing after a reboot, the convergence run **
 
 ## Outputs: RCA vs optical
 
-The sound card exposes one PCM per output path (with `sendspin_enable_spdif: true`):
+The sound card exposes one PCM per output path (with `hifi_shield2_enable_spdif: true`):
 
 - `hw:0,0` — I2S via the PCM5242 DAC: the **RCA** jacks (default, auto-selected)
 - `hw:0,1` — SPDIF passthrough: the **optical** jack
 
-Both jacks carry the same stream whenever sendspin plays, but you must set `sendspin_audio_device: hw:0,1` (or the matching PortAudio index) in `group_vars` if your amplifier is on optical, since sendspin drives one ALSA device at a time. Volume is applied in software by default, so it works on both outputs.
+Both jacks carry the same stream whenever sendspin plays, but you must set `hifi_shield2_audio_device: hw:0,1` (or the matching PortAudio index) in `group_vars` if your amplifier is on optical, since sendspin drives one ALSA device at a time. Volume is applied in software by default, so it works on both outputs.
 
 ## The HiFi Shield 2 overlay
 
@@ -110,7 +110,7 @@ The vendor instructions in `References/HiFi Shield 2 Setup.md` target Hardkernel
 - defines a new `gx-sound-card` with an I2S front-end/backend pair wired to the codec, and (optionally) an SPDIF pair wired to a `spdif-dit` for the optical jack,
 - muxes the AO-bank header pins (I2S + SPDIF) via `pinctrl` on the `aiu` node, the same pattern mainline uses on the WeTek Play2.
 
-If the card fails to appear, the first knob to try is `sendspin_enable_spdif: false` (drops the SPDIF links in case the `snd-soc-spdif-tx` module is unavailable), followed by checking the diagnostics block in the pull log.
+If the card fails to appear, the first knob to try is `hifi_shield2_enable_spdif: false` (drops the SPDIF links in case the `snd-soc-spdif-tx` module is unavailable), followed by checking the diagnostics block in the pull log.
 
 ## Console notes
 

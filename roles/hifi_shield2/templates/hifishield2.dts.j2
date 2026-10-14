@@ -24,7 +24,7 @@
 			};
 		};
 	};
-{% if sendspin_enable_spdif %}
+{% if hifi_shield2_enable_spdif %}
 	fragment@2 {
 		target-path = "/";
 		__overlay__ {
@@ -58,7 +58,7 @@
 				dai-link-0 {
 					sound-dai = <&aiu 0 0>;
 				};
-{% if sendspin_enable_spdif %}
+{% if hifi_shield2_enable_spdif %}
 				dai-link-1 {
 					sound-dai = <&aiu 0 1>;
 				};
@@ -72,7 +72,7 @@
 						sound-dai = <&pcm5242>;
 					};
 				};
-{% if sendspin_enable_spdif %}
+{% if hifi_shield2_enable_spdif %}
 				dai-link-3 {
 					sound-dai = <&aiu 0 3>;
 

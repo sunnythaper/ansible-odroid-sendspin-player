@@ -1,18 +1,18 @@
 ---
 - name: List ALSA playback devices
   ansible.builtin.command: aplay -l
-  register: hifi_aplay
+  register: hifi_shield2_aplay
   changed_when: false
   failed_when: false
 
 - name: Register HiFi Shield 2 card state
   ansible.builtin.set_fact:
-    hifi_card_present: "{{ hifi_aplay.stdout is search('(?i)hifishield|pcm51') }}"
-    sendspin_audio_ready: false
+    hifi_shield2_card_present: "{{ hifi_shield2_aplay.stdout is search('(?i)hifishield|pcm51') }}"
+    hifi_shield2_audio_ready: false
 
 - name: Check whether the overlay is configured in armbianEnv.txt
   ansible.builtin.command: grep -E '^user_overlays=.*hifishield2' /boot/armbianEnv.txt
-  register: hifi_overlay_configured
+  register: hifi_shield2_overlay_configured
   changed_when: false
   failed_when: false
 
@@ -21,37 +21,37 @@
     src: hifishield2.dts.j2
     dest: /boot/overlay-user/hifishield2.dts
     mode: "0644"
-  register: hifi_overlay_source
+  register: hifi_shield2_overlay_source
   notify: Reboot for the HiFi Shield 2 overlay
 
 - name: Compile the device tree overlay
   ansible.builtin.command:
     cmd: dtc -@ -I dts -O dtbo -o /boot/overlay-user/hifishield2.dtbo /boot/overlay-user/hifishield2.dts
-  register: hifi_overlay_compiled
-  when: (not hifi_card_present) or (hifi_overlay_source is changed)
-  changed_when: hifi_overlay_compiled.rc == 0
+  register: hifi_shield2_overlay_compiled
+  when: (not hifi_shield2_card_present) or (hifi_shield2_overlay_source is changed)
+  changed_when: hifi_shield2_overlay_compiled.rc == 0
 
 - name: Enable the overlay in armbianEnv.txt
   ansible.builtin.lineinfile:
     path: /boot/armbianEnv.txt
     regexp: '^user_overlays=.*'
     line: user_overlays=hifishield2
-  register: hifi_overlay_enabled
-  when: not hifi_card_present and hifi_overlay_configured.rc != 0
+  register: hifi_shield2_overlay_enabled
+  when: not hifi_shield2_card_present and hifi_shield2_overlay_configured.rc != 0
   notify: Reboot for the HiFi Shield 2 overlay
 
 - name: Report a HiFi Shield 2 activation failure
-  when: not hifi_card_present and hifi_overlay_configured.rc == 0 and not (hifi_overlay_source is changed or hifi_overlay_enabled is changed)
+  when: not hifi_shield2_card_present and hifi_shield2_overlay_configured.rc == 0 and not (hifi_shield2_overlay_source is changed or hifi_shield2_overlay_enabled is changed)
   block:
     - name: Capture the kernel log
       ansible.builtin.command: dmesg
-      register: hifi_dmesg
+      register: hifi_shield2_dmesg
       changed_when: false
       failed_when: false
 
     - name: Capture armbianEnv.txt
       ansible.builtin.command: cat /boot/armbianEnv.txt
-      register: hifi_env
+      register: hifi_shield2_env
       changed_when: false
       failed_when: false
 
@@ -60,46 +60,46 @@
         msg:
           - "The HiFi Shield 2 ALSA card did not appear after the overlay was activated."
           - "--- aplay -l ---"
-          - "{{ hifi_aplay.stdout_lines }}"
+          - "{{ hifi_shield2_aplay.stdout_lines }}"
           - "--- armbianEnv.txt ---"
-          - "{{ hifi_env.stdout_lines }}"
+          - "{{ hifi_shield2_env.stdout_lines }}"
           - "--- dmesg (audio related) ---"
-          - "{{ hifi_dmesg.stdout_lines | select('search', '(?i)pcm5|aiu|asoc|sound|spdif|i2s') | list }}"
+          - "{{ hifi_shield2_dmesg.stdout_lines | select('search', '(?i)pcm5|aiu|asoc|sound|spdif|i2s') | list }}"
 
     - name: Fail the convergence run
       ansible.builtin.fail:
         msg: HiFi Shield 2 card missing after overlay activation. See the diagnostics above.
 
 - name: Resolve the sendspin audio device
-  when: hifi_card_present
+  when: hifi_shield2_card_present
   block:
     - name: Use the configured audio device override
       ansible.builtin.set_fact:
-        sendspin_audio_device_resolved: "{{ sendspin_audio_device }}"
-      when: sendspin_audio_device | length > 0
+        hifi_shield2_audio_device_resolved: "{{ hifi_shield2_audio_device }}"
+      when: hifi_shield2_audio_device | length > 0
 
     - name: Auto-detect the audio device
-      when: sendspin_audio_device | length == 0
+      when: hifi_shield2_audio_device | length == 0
       block:
         - name: Find the HiFi Shield 2 ALSA device
           ansible.builtin.shell: |
             set -o pipefail
             aplay -l | sed -n '/HDMI/!s/^card \([0-9][0-9]*\):.*device \([0-9][0-9]*\):.*/hw:\1,\2/p' | head -n 1
-          register: hifi_device_detect
+          register: hifi_shield2_device_detect
           changed_when: false
 
         - name: Fail when no ALSA device was found
           ansible.builtin.fail:
             msg: Could not resolve an ALSA device for the HiFi Shield 2 card.
-          when: hifi_device_detect.stdout | trim | length == 0
+          when: hifi_shield2_device_detect.stdout | trim | length == 0
 
         - name: Register the detected audio device
           ansible.builtin.set_fact:
-            sendspin_audio_device_resolved: "{{ hifi_device_detect.stdout | trim }}"
+            hifi_shield2_audio_device_resolved: "{{ hifi_shield2_device_detect.stdout | trim }}"
 
     - name: Mark the audio path as ready
       ansible.builtin.set_fact:
-        sendspin_audio_ready: true
+        hifi_shield2_audio_ready: true
 
 - name: Install the HiFi Shield 2 init script
   ansible.builtin.template:
@@ -124,5 +124,5 @@
 
 - name: Apply the audio path defaults now
   ansible.builtin.command: /usr/local/sbin/hifishield2-init.sh
-  when: hifi_card_present
+  when: hifi_shield2_card_present
   changed_when: false

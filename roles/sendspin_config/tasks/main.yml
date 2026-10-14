@@ -14,5 +14,5 @@
     owner: "{{ sendspin_daemon_user }}"
     group: "{{ sendspin_daemon_user }}"
     mode: "0644"
-  when: sendspin_audio_ready | default(false)
+  when: hifi_shield2_audio_ready | default(false)
   notify: Restart the sendspin TUI

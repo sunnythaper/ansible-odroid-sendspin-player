@@ -28,10 +28,10 @@
         msg:
           - The HiFi Shield 2 device tree overlay has been installed.
           - The device will reboot now and complete setup on the next convergence run.
-      when: not (sendspin_audio_ready | default(false))
+      when: not (hifi_shield2_audio_ready | default(false))
 
     - name: Show the converged appliance state
-      when: sendspin_audio_ready | default(false)
+      when: hifi_shield2_audio_ready | default(false)
       block:
         - name: Show ALSA playback devices
           ansible.builtin.command: aplay -l
@@ -40,6 +40,7 @@
 
         - name: Show sendspin audio devices
           ansible.builtin.command: "{{ sendspin_daemon_home }}/.local/bin/sendspin audio-devices list"
+          become: true
           become_user: "{{ sendspin_daemon_user }}"
           register: verify_devices
           changed_when: false

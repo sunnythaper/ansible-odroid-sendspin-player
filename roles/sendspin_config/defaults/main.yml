@@ -1,7 +1,0 @@
----
-sendspin_name: "{{ sendspin_hostname }}"
-sendspin_server_url: ws://192.168.1.100:8927/sendspin
-sendspin_use_hardware_volume: false
-sendspin_use_mpris: false
-sendspin_visualizer: true
-sendspin_unpaired_access: true

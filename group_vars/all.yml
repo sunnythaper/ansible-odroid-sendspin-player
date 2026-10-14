@@ -1,5 +1,18 @@
 ---
 sendspin_hostname: livingroom
+sendspin_name: "{{ sendspin_hostname }}"
+sendspin_server_url: ws://192.168.1.100:8927/sendspin
+sendspin_use_hardware_volume: false
+sendspin_use_mpris: false
+sendspin_visualizer: true
+sendspin_unpaired_access: true
+
+sendspin_repo_url: https://github.com/sunnythaper/ansible-odroid-sendspin-player.git
+sendspin_repo_branch: main
+sendspin_pull_directory: /var/lib/ansible/local
+sendspin_pull_interval_minutes: 30
+sendspin_pull_boot_delay_minutes: 10
+
 sendspin_allow_reboot: true
 sendspin_daemon_user: sendspin
 sendspin_daemon_home: /home/sendspin
