@@ -57,7 +57,7 @@ To add a second device: flash it, run the bootstrap with a different hostname (e
 | `sendspin_name` | `{{ sendspin_hostname }}` | `group_vars/all.yml` | Client name advertised to the server |
 | `sendspin_manufacturer` | `""` (auto) | `group_vars/all.yml` | Overrides the manufacturer reported in the client hello; empty omits the key |
 | `sendspin_server_url` | example | `group_vars/all.yml` | Server URL in `settings-tui.json` — set the real URL here |
-| `hifi_shield2_audio_device` | `""` (auto) | `hifi_shield2` role | Non-empty value pins the ALSA device, e.g. `hw:0,1` for optical |
+| `hifi_shield2_audio_device` | `""` (auto) | `hifi_shield2` role | Non-empty value pins the ALSA device, e.g. `hw:0,3` for optical |
 | `hifi_shield2_enable_spdif` | `true` | `hifi_shield2` role | Adds the SPDIF (optical) PCM to the sound card |
 | `sendspin_allow_reboot` | `true` | `group_vars/all.yml` | Let the play reboot when the overlay changes |
 | `sendspin_use_hardware_volume` | `false` | `group_vars/all.yml` | Software volume only (set `true` later to control DAC/ALSA volume from the server) |
@@ -73,7 +73,7 @@ sudo /usr/local/bin/sendspin-pull.sh                  # force a convergence run 
 journalctl -u sendspin-pull -n 100                   # what the last run did
 journalctl -u sendspin-tui -f                        # TUI/player logs
 journalctl -u hifishield2-init -n 50                 # mixer/overlay init
-sudo -u sendspin ~/.local/bin/sendspin audio-devices list   # list ALSA devices
+sudo -u sendspin /home/sendspin/.local/bin/sendspin audio-devices list   # list ALSA devices
 aplay -l                                             # raw card listing
 sudo systemctl restart sendspin-tui                  # restart the player
 ```
@@ -84,10 +84,10 @@ If the shield's ALSA card is ever missing after a reboot, the convergence run **
 
 The sound card exposes one PCM per output path (with `hifi_shield2_enable_spdif: true`):
 
-- `hw:0,0` — I2S via the PCM5242 DAC: the **RCA** jacks (default, auto-selected)
-- `hw:0,1` — SPDIF passthrough: the **optical** jack
+- `hw:0,2` — I2S via the PCM5242 DAC: the **RCA** jacks (default, auto-selected)
+- `hw:0,3` — SPDIF passthrough: the **optical** jack
 
-Both jacks carry the same stream whenever sendspin plays, but you must set `hifi_shield2_audio_device: hw:0,1` (or the matching PortAudio index) in `group_vars` if your amplifier is on optical, since sendspin drives one ALSA device at a time. Volume is applied in software by default, so it works on both outputs.
+Both jacks carry the same stream whenever sendspin plays, but you must set `hifi_shield2_audio_device: hw:0,3` (or the matching PortAudio index) in `group_vars` if your amplifier is on optical, since sendspin drives one ALSA device at a time. Volume is applied in software by default, so it works on both outputs.
 
 ## The HiFi Shield 2 overlay
 
