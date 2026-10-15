@@ -42,8 +42,8 @@ ProtectProc=invisible
 ProcSubset=pid
 IPAddressDeny=any
 IPAddressAllow={{ sendspin_server_url | urlsplit('hostname') }}
-PrivateDevices=yes
 DeviceAllow=char-alsa rwm
+DeviceAllow=char-tty rwm
 ProtectHome=read-only
 
 [Install]
